@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10
+struct KeyValue {
+    int key;
+    int value;
+};
+struct Node {
+    struct KeyValue data;
+    struct Node* next;
+};
+struct HashTable {
+    struct KeyValue table[TABLE_SIZE];
+};
+int hash(int key) {
+    return key % TABLE_SIZE;
+}
+
+// Separate Chaining
+void separateChainingInsert(struct Node* hashTable[], int key, int value) {
+    int index = hash(key);
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data.key = key;
+    newNode->data.value = value;
+    newNode->next = hashTable[index];
+    hashTable[index] = newNode;
+}
+
+// Linear Probing
+void linearProbingInsert(struct HashTable* hashTable, int key, int value) {
+    int index = hash(key);
+    int i = 0;
+    while (hashTable->table[(index + i) % TABLE_SIZE].key != -1) {
+        i++;
+    }
+    hashTable->table[(index + i) % TABLE_SIZE].key = key;
+    hashTable->table[(index + i) % TABLE_SIZE].value = value;
+}
+
+// Quadratic Probing
+void quadraticProbingInsert(struct HashTable* hashTable, int key, int value) {
+    int index = hash(key);
+    int i = 0;
+    while (hashTable->table[(index + i*i) % TABLE_SIZE].key != -1) {
+        i++;
+    }
+    hashTable->table[(index + i*i) % TABLE_SIZE].key = key;
+    hashTable->table[(index + i*i) % TABLE_SIZE].value = value;
+}
+
+// Double Hashing
+int hash2(int key) {
+    return 1 + (key % (TABLE_SIZE - 1));
+}
+
+void doubleHashingInsert(struct HashTable* hashTable, int key, int value) {
+    int index = hash(key);
+    int step = hash2(key);
+    int i = 0;
+    while (hashTable->table[(index + i*step) % TABLE_SIZE].key != -1) {
+        i++;
+    }
+    hashTable->table[(index + i*step) % TABLE_SIZE].key = key;
+    hashTable->table[(index + i*step) % TABLE_SIZE].value = value;
+}
+
+int main() {
+    struct Node* separateChainingTable[TABLE_SIZE] = { NULL };
+    struct HashTable linearProbingTable;
+    int i;
+    for (i = 0; i < TABLE_SIZE; i++) {
+        linearProbingTable.table[i].key = -1; 
+    }
+    struct HashTable quadraticProbingTable;
+    for (i = 0; i < TABLE_SIZE; i++) {
+        quadraticProbingTable.table[i].key = -1;
+    }
+    struct HashTable doubleHashingTable;
+    for (i = 0; i < TABLE_SIZE; i++) {
+        doubleHashingTable.table[i].key = -1;
+    }
+
+    separateChainingInsert(separateChainingTable, 10, 100);
+    separateChainingInsert(separateChainingTable, 20, 200);
+    separateChainingInsert(separateChainingTable, 11, 300);
+
+    linearProbingInsert(&linearProbingTable, 10, 100);
+    linearProbingInsert(&linearProbingTable, 20, 200);
+    linearProbingInsert(&linearProbingTable, 11, 300);
+
+    quadraticProbingInsert(&quadraticProbingTable, 10, 100);
+    quadraticProbingInsert(&quadraticProbingTable, 20, 200);
+    quadraticProbingInsert(&quadraticProbingTable, 11, 300);
+
+    doubleHashingInsert(&doubleHashingTable, 10, 100);
+    doubleHashingInsert(&doubleHashingTable, 20, 200);
+    doubleHashingInsert(&doubleHashingTable, 11, 300);
+    
+	printf("nithish 192221138");
+	printf("Separate Chaining Hash Table:\n");
+    for (i = 0; i < TABLE_SIZE; i++) {
+        struct Node* current = separateChainingTable[i];
+        while (current != NULL) {
+            printf("[%d] -> (%d, %d) ", i, current->data.key, current->data.value);
+            current = current->next;
+        }
+        printf("\n");
+    }
+
+    printf("\nLinear Probing Hash Table:\n");
+    for (i = 0; i < TABLE_SIZE; i++) {
+        if (linearProbingTable.table[i].key != -1) {
+            printf("[%d] -> (%d, %d)\n", i, linearProbingTable.table[i].key, linearProbingTable.table[i].value);
+        }
+    }
+
+    printf("\nQuadratic Probing Hash Table:\n");
+    for (i = 0; i < TABLE_SIZE; i++) {
+        if (quadraticProbingTable.table[i].key != -1) {
+            printf("[%d] -> (%d, %d)\n", i, quadraticProbingTable.table[i].key, quadraticProbingTable.table[i].value);
+        }
+    }
+
+    printf("\nDouble Hashing Hash Table:\n");
+    for (i = 0; i < TABLE_SIZE; i++) {
+        if (doubleHashingTable.table[i].key != -1) {
+            printf("[%d] -> (%d, %d)\n", i, doubleHashingTable.table[i].key, doubleHashingTable.table[i].value);
+        }
+    }
+
+    return 0;
+}
