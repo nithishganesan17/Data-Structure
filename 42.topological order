@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_NODES 100
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Graph {
+    int numNodes;
+    struct Node* adjacencyList[MAX_NODES];
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void addEdge(struct Graph* graph, int src, int dest) {
+    struct Node* newNode = createNode(dest);
+    newNode->next = graph->adjacencyList[src];
+    graph->adjacencyList[src] = newNode;
+}
+
+void topologicalDFS(struct Graph* graph, int current, int* visited, int* stack, int* stackIndex) {
+    visited[current] = 1;
+
+    struct Node* neighbor = graph->adjacencyList[current];
+    while (neighbor != NULL) {
+        if (!visited[neighbor->data]) {
+            topologicalDFS(graph, neighbor->data, visited, stack, stackIndex);
+        }
+        neighbor = neighbor->next;
+    }
+
+    stack[(*stackIndex)++] = current;
+}
+
+void topologicalSort(struct Graph* graph) {
+    int visited[MAX_NODES] = {0};
+    int stack[MAX_NODES];
+    int stackIndex = 0;
+	int i;
+    for (i = 0; i < graph->numNodes; ++i) {
+        if (!visited[i]) {
+            topologicalDFS(graph, i, visited, stack, &stackIndex);
+        }
+    }
+
+    printf("Topological Order:\n");
+    for (i = stackIndex - 1; i >= 0; --i) {
+        printf("%d ", stack[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+	printf("nithish 192221138");
+    struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+    graph->numNodes = 6;
+	int i;
+    for (i = 0; i < graph->numNodes; ++i) {
+        graph->adjacencyList[i] = NULL;
+    }
+
+    addEdge(graph, 5, 2);
+    addEdge(graph, 5, 0);
+    addEdge(graph, 4, 0);
+    addEdge(graph, 4, 1);
+    addEdge(graph, 2, 3);
+    addEdge(graph, 3, 1);
+
+    topologicalSort(graph);
+
+    return 0;
+}
