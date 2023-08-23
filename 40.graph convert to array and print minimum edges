@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_VERTICES 10
+int graph[MAX_VERTICES][MAX_VERTICES] = {
+    {0, 1, 0, 1, 0},
+    {1, 0, 1, 1, 1},
+    {0, 1, 0, 0, 1},
+    {1, 1, 0, 0, 1},
+    {0, 1, 1, 1, 0}
+};
+
+int main() {
+	printf("nithish 192221138");
+    int numVertices = 5; 
+    int minEdges = MAX_VERTICES * (MAX_VERTICES - 1) / 2; 
+    int i,j;
+    for (i = 0; i < numVertices; i++) {
+        int edgesCount = 0;
+        for (j = 0; j < numVertices; j++) {
+            if (graph[i][j] == 1) {
+                edgesCount++;
+            }
+        }
+        if (edgesCount < minEdges) {
+            minEdges = edgesCount;
+        }
+    }
+
+    printf("Minimum number of edges in the graph: %d\n", minEdges);
+    
+    return 0;
+}
