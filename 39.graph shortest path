@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define V 6  // Number of vertices
+
+int minDistance(int dist[], int visited[]) {
+    int min = INT_MAX, min_index;
+    int v;
+    for (v = 0; v < V; v++) {
+        if (!visited[v] && dist[v] <= min) {
+            min = dist[v];
+            min_index = v;
+        }
+    }
+    return min_index;
+}
+void printPath(int parent[], int target) {
+    if (parent[target] == -1)
+        return;
+
+    printPath(parent, parent[target]);
+    printf(" -> %d", target);
+}
+void dijkstra(int graph[V][V], int source, int target) {
+    int dist[V];
+    int visited[V];
+    int parent[V];
+    int i;
+
+    for (i = 0; i < V; i++) {
+        dist[i] = INT_MAX;
+        visited[i] = 0;
+        parent[i] = -1;
+    }
+
+    dist[source] = 0;
+    int count;
+
+    for (count = 0; count < V - 1; count++) {
+        int u = minDistance(dist, visited);
+        visited[u] = 1;
+        int v;
+
+        for (v = 0; v < V; v++) {
+            if (!visited[v] && graph[u][v] && dist[u] != INT_MAX && dist[u] + graph[u][v] < dist[v]) {
+                dist[v] = dist[u] + graph[u][v];
+                parent[v] = u;
+            }
+        }
+    }
+
+    printf("Shortest path from %d to %d: %d", source, target, source);
+    printPath(parent, target);
+    printf("\nShortest distance: %d\n", dist[target]);
+}
+
+int main() {
+	printf("nithish 192221138");
+    int graph[V][V] = {
+        {0, 2, 4, 0, 0, 0},
+        {0, 0, 1, 7, 0, 0},
+        {0, 0, 0, 0, 3, 0},
+        {0, 0, 0, 0, 0, 1},
+        {0, 0, 0, 2, 0, 5},
+        {0, 0, 0, 0, 0, 0}
+    };
+
+    int source = 0;
+    int target = 5;
+
+    dijkstra(graph, source, target);
+
+    return 0;
+}
